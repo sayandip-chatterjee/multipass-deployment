@@ -18,9 +18,12 @@ def add_env_script():
     else:
         print(f"[!] Multipass path not found at {mp_path}")
 
-def run(cmd, check=True, shell=True):
+def run(cmd, capture_output=False, check=True, shell=True):
     print(f"\033[1;34m[+] Running:\033[0m {cmd}")
-    return subprocess.run(cmd, shell=shell, text=True, check=check)
+    return subprocess.run(
+        cmd, shell=shell, text=True,
+        capture_output=capture_output, check=check
+    )
 
 def check_multipass():
     """Verify multipass binary exists, else try to install."""
@@ -30,7 +33,6 @@ def check_multipass():
         if SYSTEM == "windows":
             print("\033[1;33m[>] Attempting automatic Multipass install on Windows...\033[0m")
             try:
-                # Try winget first
                 run("winget install --id Canonical.Multipass -e --accept-source-agreements --accept-package-agreements")
                 print("\n\033[1;32m[✓] Multipass installed successfully via winget.\033[0m")
                 add_env_script()
@@ -40,11 +42,9 @@ def check_multipass():
                     installer_url = "https://multipass.run/download/windows/latest"
                     installer_path = os.path.join(os.environ["TEMP"], "multipass-latest.msi")
 
-                    # Download MSI using PowerShell
                     ps_download = f'powershell -Command "Invoke-WebRequest -Uri {installer_url} -OutFile {installer_path}"'
                     run(ps_download)
 
-                    # Install MSI silently
                     run(f'msiexec /i "{installer_path}" /qn /norestart')
                     print("\n\033[1;32m[✓] Multipass installed successfully via MSI.\033[0m")
                     add_env_script()
@@ -72,31 +72,19 @@ def check_multipass():
     else:
         print(f"\033[1;32m[✓] Found {MULTIPASS} in PATH.\033[0m")
 
-def progress_bar(duration, prefix="Progress", length=30):
-    """
-    Displays a progress bar in the terminal.
-    
-    :param duration: total time in seconds for the progress bar
-    :param prefix: text before the progress bar
-    :param length: length of the bar in characters
-    """
-    for i in range(length + 1):
-        percent = i / length
-        bar = "#" * i + "-" * (length - i)
-        sys.stdout.write(f"\r{prefix}: [{bar}] {percent*100:.0f}%")
-        sys.stdout.flush()
-        time.sleep(duration / length)
-    print()
+def get_existing_vms():
+    """Return a list of existing Multipass instance names."""
+    result = subprocess.run(
+        ["multipass", "list", "--format", "csv"],
+        capture_output=True,
+        text=True,
+        check=True
+    )
+    lines = result.stdout.strip().splitlines()[1:]
+    return [line.split(",")[0] for line in lines]
 
 def wait_for_enter(message="Press ENTER to continue..."):
     input(f"\033[1;33m{message}\033[0m")
-
-def run(cmd, capture_output=False, check=True, shell=True):
-    print(f"\033[1;34m[+] Running:\033[0m {cmd}")
-    return subprocess.run(
-        cmd, shell=shell, text=True,
-        capture_output=capture_output, check=check
-    )
 
 def main():
     print("\n\033[1;31mDisclaimer: Deactivate any SECURED network before proceeding...\033[0m")
@@ -104,9 +92,32 @@ def main():
 
     check_multipass()
 
-    vmname = input("\n\033[1;31mPlease type a unique name for your VM instance:\033[0m ")
+    existing_vms = get_existing_vms()
 
-    run(f"{MULTIPASS} launch --name {vmname} --cpus 2 --memory 4G --disk 20G")
+    while True:
+        vmname = input("\n\033[1;31mPlease type a unique name for your VM instance:\033[0m ").strip()
+        if vmname in existing_vms:
+            print(f"\033[1;33m[!] The name '{vmname}' already exists. Please choose another.\033[0m")
+        else:
+            break
+
+    print("\n\033[1;33mWould you like to use default configuration? (1 CPU, 1G RAM, 5G Disk)\033[0m")
+    choice = input("Type 'y' to use defaults, or 'n' to customize: ").strip().lower()
+
+    if choice == "n":
+        print("\n\033[1;33mPlease use digits only :\033[0m")
+        cpus = input("Enter number of CPUs: ")
+        memory = input("Enter memory : ")
+        disk = input("Enter disk size : ")
+
+        launch_cmd = f"{MULTIPASS} launch --name {vmname} --cpus {cpus} --memory {memory}G --disk {disk}G"
+    elif choice == "y":
+        launch_cmd = f"{MULTIPASS} launch --name {vmname}"
+    else:   
+        print("\033[1;31m[!] Invalid choice. Exiting.\033[0m")
+        sys.exit(1)
+
+    run(launch_cmd)
     run(f"{MULTIPASS} exec {vmname} -- lsb_release -a")
     run(f"{MULTIPASS} list")
     run(f"{MULTIPASS} help")
@@ -114,10 +125,7 @@ def main():
 
     run(f"{MULTIPASS} start {vmname}")
 
-    print("\n\033[1;33mNow starting a shell session with your VM... Let's go!\033[0m")
-    wait_for_enter()
-
-    os.system(f"{MULTIPASS} shell {vmname}")
+    print("\n\033[1;33mNow start a shell session or use the help commands above... Let's go!\033[0m")
 
 
 if __name__ == "__main__":
