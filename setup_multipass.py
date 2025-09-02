@@ -10,32 +10,6 @@ if SYSTEM == "windows":
 else:
     MULTIPASS = "multipass"
 
-def check_ports():
-    critical_ports = [1514, 1515]
-
-    for port in critical_ports:
-        result = subprocess.run(
-            f"sudo lsof -ti :{port}",
-            shell=True,
-            capture_output=True,
-            text=True
-        )
-        pids = result.stdout.strip()
-        if pids:
-            print(f"❌ Port {port} is already in use by PID(s): {pids}")
-            print("Please free this port before running the installer.")
-            result = subprocess.run(f"ps aux | grep {pids} | head -n 1", shell=True, capture_output=True, text=True)
-            print()
-            print(f"Process using the port :")
-            print(f"{result.stdout.strip()}")
-            print()
-            print(f"Check 'ps aux | grep <pname>' and find out the service name associated with the PID.")
-            print(f"Do a gracefull shutdown 'sudo systemctl stop <sname>' .")
-            print(f"CAUTION!!! You can also use command 'sudo kill -9 {pids}' to free the port, then re-trigger the installation .")
-            sys.exit(1)
-
-    print("✅ All required ports are free. Continuing installation...")
-
 def add_env_script():
     mp_path = r"C:\Program Files\Multipass\bin"
     if os.path.exists(mp_path):
