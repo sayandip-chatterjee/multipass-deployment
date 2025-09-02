@@ -68,24 +68,24 @@ multipass launch --help
 
 [For multiple NICs]
 
-multipass launch --name testvm ... \
-  --network name=eth0,mode=bridged,mac=52:54:00:aa:bb:cc \
+multipass launch --name testvm ... 
+  --network name=eth0,mode=bridged,mac=52:54:00:aa:bb:cc 
   --network name=default,mode=nat
 ```
 
 ### 1. NAT (default)
 
--   VM gets a private IP in a Multipass-managed NAT.\
--   Outbound internet works.\
+-   VM gets a private IP in a Multipass-managed NAT.
+-   Outbound internet works.
 -   Only accessible from host via `multipass shell` or
-    `multipass exec`.\
+    `multipass exec`.
 -   Other devices on your LAN cannot reach it.
 
 ### 2. Bridged
 
--   VM is attached to a host network adapter (e.g., `eth0`, `wlp2s0`).\
--   VM gets an IP from your LAN, just like a physical machine.\
--   Accessible directly from other devices on the LAN.\
+-   VM is attached to a host network adapter (e.g., `eth0`, `wlp2s0`).
+-   VM gets an IP from your LAN, just like a physical machine.
+-   Accessible directly from other devices on the LAN.
 -   Requires choosing a valid adapter from `multipass networks`.
 
 ------------------------------------------------------------------------
@@ -111,6 +111,6 @@ Explanation of Sections
 
 ## ⚠️ Notes
 
--   NAT mode is simpler and always works.\
--   Bridged mode requires a supported physical adapter.\
+-   NAT mode is simpler and always works.
+-   Bridged mode requires a supported physical adapter.
 -   Multipass networking capabilities may vary by OS and backend.
