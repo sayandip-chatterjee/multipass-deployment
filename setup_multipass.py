@@ -103,7 +103,6 @@ def main():
     wait_for_enter("Press ENTER to continue...")
 
     check_multipass()
-    check_ports()
 
     vmname = input("\n\033[1;31mPlease type a unique name for your VM instance:\033[0m ")
 
