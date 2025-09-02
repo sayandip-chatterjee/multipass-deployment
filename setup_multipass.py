@@ -125,6 +125,8 @@ def main():
 
     run(f"{MULTIPASS} start {vmname}")
 
+    print("\n\033[1;31mFollow the Readme to configure custom network for your multipass VM\033[0m")
+
     print("\n\033[1;33mNow start a shell session or use the help commands above... Let's go!\033[0m")
 
 
