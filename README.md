@@ -51,6 +51,8 @@ python3 setup_multipass.py
 
 ## 🌐 Networking Modes [NEEDS MORE ELABORATE INFO]
 
+In Multipass, if you don’t specify a network (--network), the VM is attached to the default NAT network that Multipass creates.
+
 The script allows you to choose between two networking modes:
 
 ### 1. NAT (default)
