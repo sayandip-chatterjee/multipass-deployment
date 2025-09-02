@@ -10,6 +10,18 @@ if SYSTEM == "windows":
 else:
     MULTIPASS = "multipass"
 
+def print_in_box(text):
+    lines = text.splitlines()
+    max_len = max(len(line) for line in lines) if lines else 0
+    box_width = max_len + 4  # +2 for padding, +2 for borders
+
+    top_bottom_border = "+" + "-" * (box_width - 2) + "+"
+
+    print(top_bottom_border)
+    for line in lines:
+        print(f"| {line.ljust(max_len)} |")
+    print(top_bottom_border)
+
 def add_env_script():
     mp_path = r"C:\Program Files\Multipass\bin"
     if os.path.exists(mp_path):
@@ -142,8 +154,8 @@ def main():
     wait_for_enter()
 
     run(f"{MULTIPASS} start {vmname}")
-
-    print("\n\033[1;31mFollow the Readme to configure custom network for your multipass VM\033[0m")
+    
+    print_in_box("Follow the Readme to configure custom network for your multipass VM")
 
     print("\n\033[1;33mNow start a shell session or use the help commands above... Let's go!\033[0m")
 
