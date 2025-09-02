@@ -86,6 +86,22 @@ def get_existing_vms():
 def wait_for_enter(message="Press ENTER to continue..."):
     input(f"\033[1;33m{message}\033[0m")
 
+def select_os_image():
+    """List available Multipass OS images and let the user choose."""
+    print("\n\033[1;34m[+] Fetching available OS images...\033[0m")
+    try:
+        result = run(f"{MULTIPASS} find", capture_output=True)
+        images = result.stdout.strip()
+        print("\nAvailable OS images:\n")
+        print(images)
+        print("\n\033[1;33mPress ENTER to use the default Ubuntu LTS.\033[0m")
+        os_choice = input("Enter image name/alias (e.g., 22.04 OR jammy): ").strip()
+        return os_choice
+    except Exception as e:
+        print(f"\033[1;31m[!] Could not fetch images: {e}\033[0m")
+        print("➡ Falling back to default (Ubuntu LTS).")
+        return ""
+
 def main():
     print("\n\033[1;31mDisclaimer: Deactivate any SECURED network before proceeding...\033[0m")
     wait_for_enter("Press ENTER to continue...")
@@ -109,10 +125,12 @@ def main():
         cpus = input("Enter number of CPUs: ")
         memory = input("Enter memory : ")
         disk = input("Enter disk size : ")
+        os_image = select_os_image()
+        launch_cmd = f"{MULTIPASS} launch {os_image} --name {vmname} --cpus {cpus} --memory {memory}G --disk {disk}G"
 
-        launch_cmd = f"{MULTIPASS} launch --name {vmname} --cpus {cpus} --memory {memory}G --disk {disk}G"
     elif choice == "y":
         launch_cmd = f"{MULTIPASS} launch --name {vmname}"
+        
     else:   
         print("\033[1;31m[!] Invalid choice. Exiting.\033[0m")
         sys.exit(1)
