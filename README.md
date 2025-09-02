@@ -11,7 +11,7 @@ VMs with customizable resources and networking.
 -   ✅ Automatically installs **Multipass** if not found
     (Windows/Linux).
 -   ✅ Interactive prompts for **CPU, memory, disk** configuration.
--   ✅ Option to use **default NAT** or **bridged networking** or customised network configuration.
+-   ✅ Manual Options to use **default NAT** or **bridged networking** with **single/multiple NICs** or **customised network configuration**.
 -   ✅ Simple progress messages and interactive flow.
 
 ------------------------------------------------------------------------
@@ -25,8 +25,6 @@ VMs with customizable resources and networking.
 ------------------------------------------------------------------------
 
 ## ▶️ Usage
-
-Clone or copy this repository.
 
 [LINUX] Clone the repository and run the setup script:
 ```bash
@@ -49,11 +47,31 @@ python3 setup_multipass.py
 - python3 setup_multipass.py
 ```
 
-## 🌐 Networking Modes [NEEDS MORE ELABORATE INFO]
+## 🌐 Networking Configurations
 
 In Multipass, if you don’t specify a network (--network), the VM is attached to the default NAT network that Multipass creates.
+NOTE : I found using cloud-init.yaml approach is better than manual commands below.
 
-The script allows you to choose between two networking modes:
+```bash
+multipass launch --help
+...
+--network <spec>    Add a network interface to the instance, where <spec> is in the "key=value,key=value" format,
+                    --network name=mpqemubr0,mode=manual,mac=xx:xx:xx:xx:xx:xx
+                    with the following keys available:
+                        name: the network to connect to (required), use the `multipass networks` command for 
+                              a list of possible values, or use 'bridged' to use the interface configured via 
+                             `multipass set local.bridged-network`.
+                        mode: auto|manual (default: auto)
+                        mac: hardware address (default: random).
+--bridged           Adds one `--network bridged` network.
+...
+
+[For multiple NICs]
+
+multipass launch --name testvm ... \
+  --network name=eth0,mode=bridged,mac=52:54:00:aa:bb:cc \
+  --network name=default,mode=nat
+```
 
 ### 1. NAT (default)
 
@@ -69,6 +87,25 @@ The script allows you to choose between two networking modes:
 -   VM gets an IP from your LAN, just like a physical machine.\
 -   Accessible directly from other devices on the LAN.\
 -   Requires choosing a valid adapter from `multipass networks`.
+
+------------------------------------------------------------------------
+
+## ☁️ Cloud Init YAML
+
+```bash
+multipass launch 22.04 --name testvm --cloud-init cloud-init.yaml
+```
+
+Explanation of Sections
+
+- hostname/locale/timezone → Sets identity of the VM.
+- users → Creates a devuser with sudo, SSH key, and password login enabled.
+- network → Example static IP config (you can remove for DHCP).
+- package_update/upgrade → Updates and installs useful packages (Docker, Python, Node.js).
+- apt sources → Adds a custom repo (Docker in this case).
+- write_files → Writes files inside VM (motd, aliases).
+- runcmd → Commands executed at first boot.
+- final_message → Prints a friendly message after cloud-init finishes.
 
 ------------------------------------------------------------------------
 
