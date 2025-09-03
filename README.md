@@ -12,7 +12,7 @@ VMs with customizable resources and networking.
 - [⚙️ Prerequisites](#️-prerequisites)
 - [📦 Installation & Usage](#-installation--usage)
 - [🌐 Networking Configurations](#-networking-configurations)
-- [Cloud Init YAML](#-cloud-init-yaml)
+- [🚀 Cloud Init YAML](#-cloud-init-yaml)
 
 ------------------------------------------------------------------------
 
@@ -108,7 +108,7 @@ Multipass networking capabilities may vary by OS and backend.
 
 ------------------------------------------------------------------------
 
-## Cloud Init YAML
+## 🚀 Cloud Init YAML
 
 ```bash
 multipass launch 22.04 --name testvm --cloud-init cloud-init.yaml
