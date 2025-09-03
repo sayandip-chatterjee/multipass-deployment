@@ -13,7 +13,8 @@ VMs with customizable resources and networking.
 - [📦 Installation & Usage](#-installation--usage)
 - [🌐 Networking Configurations](#-networking-configurations)
 - [🚀 Cloud Init YAML](#-cloud-init-yaml)
-
+- [🧹 Cleanup](#-cleanup)
+  
 ------------------------------------------------------------------------
 
 ## 🔍 Features
@@ -126,3 +127,17 @@ Explanation of Sections
 - final_message → Prints a friendly message after cloud-init finishes.
 
 ------------------------------------------------------------------------
+
+## 🧹 Cleanup
+
+```bash
+multipass list
+multipass delete <NAME>
+multipass purge
+```
+
+In case you have accidentally deleted and not purged yet
+```
+multipass list
+multipass recover <NAME>
+```
