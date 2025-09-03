@@ -36,12 +36,18 @@ python3 setup_multipass.py
 [WINDOWS] Ensure all the steps are done as mentioed:
 ```bash
 In the Windows machine BIOS setup, make sure that virtualization is turned on
+
 Install git bash - https://git-scm.com/downloads/win and close the git bash window, do not clone yet.
+
 Install python3.8 from Microsoft Store
+
 Go to Windows Features from the Start Menu -> Search and make sure You enable the
 "HyperV", "Virtual Machine Platform", and the "Windows Hypervisor Platform" to run the VM.
+
 Restart the machine.
+
 Open powershell (NOT AS Administrator)
+
 git clone https://github.com/sayandip-chatterjee/multipass-deployment.git
 cd multipass-deployment/
 python3 setup_multipass.py
