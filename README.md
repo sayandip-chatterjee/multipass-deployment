@@ -6,6 +6,16 @@ VMs with customizable resources and networking.
 
 ------------------------------------------------------------------------
 
+## 📑 Table of Contents
+
+- [🔍 Features](#-features)
+- [⚙️ Prerequisites](#️-prerequisites)
+- [📦 Installation & Usage](#-installation--usage)
+- [🌐 Networking Configurations](#-networking-configurations)
+- [☁️ Cloud Init YAML](#-cloud-init-yaml)
+
+------------------------------------------------------------------------
+
 ## 🔍 Features
 
 -   ✅ Automatically installs **Multipass** if not found
@@ -24,7 +34,7 @@ VMs with customizable resources and networking.
 
 ------------------------------------------------------------------------
 
-## ▶️ Usage
+## 📦 Installation & Usage
 
 [LINUX] Clone the repository and run the setup script:
 ```bash
@@ -79,6 +89,8 @@ multipass launch --name testvm ...
   --network name=default,mode=nat
 ```
 
+Multipass networking capabilities may vary by OS and backend.
+
 ### 1. NAT (default)
 
 -   VM gets a private IP in a Multipass-managed NAT.
@@ -114,9 +126,3 @@ Explanation of Sections
 - final_message → Prints a friendly message after cloud-init finishes.
 
 ------------------------------------------------------------------------
-
-## ⚠️ Notes
-
--   NAT mode is simpler and always works.
--   Bridged mode requires a supported physical adapter.
--   Multipass networking capabilities may vary by OS and backend.
